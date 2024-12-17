@@ -1,0 +1,27 @@
+<resources>
+  <string name="app_name">Bartesian Barcode Scanner</string>
+  <string name="gin">Gin</string>
+  <string name="whiskey">Whiskey</string>
+  <string name="tequila">Tequila</string>
+  <string name="vodka">Vodka</string>
+  <string name="rum">Rum</string>
+  <string name="navigate_back">Navigate back</string>
+  <string name="light">Light</string>
+  <string name="strong">Strong</string>
+  <string name="light_oz">Light: %.1f oz.</string>
+  <string name="regular_oz">Regular: %.1f oz.</string>
+  <string name="strong_oz">Strong: %.1f oz.</string>
+  <string name="lowball">Lowball</string>
+  <string name="highball">Highball</string>
+  <string name="shaker">Shaker</string>
+  <string name="water">%.1f oz water</string>
+  <string name="privacy_url">https://www.venakalukiewicz.com/bartesian-privacy-policy</string>
+  <string name="privacy_policy">Privacy policy</string>
+  <string name="more">More</string>
+  <string name="amount_of_alcohol">Amount of alcohol: %1$s:</string>
+  <string name="drink_id">Drink ID</string>
+  <string name="oz">%.1f oz.</string>
+  <string name="code">Code: %1$d</string>
+  <string name="strength_of">Strength of %1$s: %2$.1f oz.</string>
+  <string name="glass">Glass: %1$s</string>
+</resources>
