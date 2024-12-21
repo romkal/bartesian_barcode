@@ -4,8 +4,12 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,7 +20,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.inset
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.setValue
@@ -26,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -33,18 +38,26 @@ import com.google.accompanist.permissions.shouldShowRationale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraScreen(modifier: Modifier = Modifier, onBarcode: (Int) -> Unit, onNoPermission: () -> Unit) {
+fun CameraScreen(
+    modifier: Modifier = Modifier, onBarcode: (Int) -> Unit,
+    setCustomActions: (@Composable RowScope.() -> Unit) -> Unit,
+  ) {
   val coroutineScope = rememberCoroutineScope()
   var callbackCalled by remember { mutableStateOf(false) }
   val permissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
   if (!permissionState.status.isGranted) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
       Text("Camera permission is needed to scan a barcode")
       if (permissionState.status.shouldShowRationale) {
         Button(onClick = {
           permissionState.launchPermissionRequest()
         }) {
-          Text("Grant permission")
+          Text(stringResource(R.string.grant_permission))
+        }
+        Button(onClick = {
+          onBarcode(0)
+        }) {
+          Text(stringResource(R.string.manual_entry))
         }
       } else {
         LaunchedEffect(permissionState) {
@@ -53,6 +66,20 @@ fun CameraScreen(modifier: Modifier = Modifier, onBarcode: (Int) -> Unit, onNoPe
       }
     }
     return
+  }
+  LaunchedEffect(Unit) {
+    setCustomActions {
+      IconButton(
+        onClick = {
+          onBarcode(0)
+        },
+      ) {
+        Icon(
+          painter = painterResource(R.drawable.baseline_fast_forward_24),
+          contentDescription = "Manual entry"
+        )
+      }
+    }
   }
   Box(modifier = modifier) {
     val isPortrait = LocalConfiguration.current.layoutDirection == Configuration.ORIENTATION_PORTRAIT

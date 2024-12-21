@@ -24,4 +24,6 @@
   <string name="code">Code: %1$d</string>
   <string name="strength_of">Strength of %1$s: %2$.1f oz.</string>
   <string name="glass">Glass: %1$s</string>
+  <string name="manual_entry">Manual entry</string>
+  <string name="grant_permission">Grant permission</string>
 </resources>

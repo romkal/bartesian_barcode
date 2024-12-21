@@ -33,7 +33,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -85,7 +85,7 @@ fun DetailsScreen(
         context.startActivity(intent)
       }
     }
-  DisposableEffect(Unit) {
+  LaunchedEffect(Unit) {
     setCustomActions {
       IconButton(
         onClick = {
@@ -97,9 +97,6 @@ fun DetailsScreen(
           contentDescription = "Print"
         )
       }
-    }
-    onDispose {
-      setCustomActions {}
     }
   }
   Column(

@@ -6,22 +6,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.captionBarPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.systemGestures
-import androidx.compose.foundation.layout.waterfall
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -41,11 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import us.romkal.barcode.ui.theme.BartesianBarcodeScannerTheme
 
 class MainActivity : ComponentActivity() {
@@ -57,10 +46,14 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       val navController = rememberNavController()
-      val (customActions, setCustomActions)  = remember{ mutableStateOf<@Composable RowScope.() -> Unit>({}) }
+      val (customActions, setCustomActions) = remember {
+        mutableStateOf<@Composable RowScope.() -> Unit>({})
+      }
       BartesianBarcodeScannerTheme {
         Scaffold(
-          modifier = Modifier.fillMaxSize().consumeWindowInsets(WindowInsets.navigationBars),
+          modifier = Modifier
+            .fillMaxSize()
+            .consumeWindowInsets(WindowInsets.navigationBars),
           topBar = {
             TopAppBar(
               title = { Text(stringResource(R.string.app_name)) },
@@ -75,8 +68,8 @@ class MainActivity : ComponentActivity() {
                 }
               },
               actions = {
-                PrivacyPolicy()
                 customActions()
+                PrivacyPolicy()
               },
             )
           },
@@ -89,8 +82,7 @@ class MainActivity : ComponentActivity() {
             composable<Camera> {
               CameraScreen(
                 onBarcode = { barcode -> navController.navigate(Details(barcode)) },
-                onNoPermission = {
-                  if (!navController.popBackStack()) finish()                 },
+                setCustomActions = setCustomActions,
               )
             }
             composable<Details> { DetailsScreen(setCustomActions) }
@@ -105,19 +97,24 @@ class MainActivity : ComponentActivity() {
 private fun PrivacyPolicy() {
   var expanded by remember { mutableStateOf(false) }
   IconButton(
-    onClick = {expanded = true}
+    onClick = { expanded = true }
   ) {
     Icon(imageVector = Icons.Default.MoreVert, contentDescription = stringResource(R.string.more))
   }
   DropdownMenu(
     expanded = expanded,
-    onDismissRequest = {expanded = false},
+    onDismissRequest = { expanded = false },
   ) {
     val context = LocalContext.current
     DropdownMenuItem(
       text = { Text(stringResource(R.string.privacy_policy)) },
       onClick = {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.privacy_url))))
+        context.startActivity(
+          Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(context.getString(R.string.privacy_url))
+          )
+        )
       }
     )
   }
