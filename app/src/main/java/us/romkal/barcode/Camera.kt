@@ -32,7 +32,7 @@ fun Camera(analyzer: ImageAnalysis.Analyzer, modifier: Modifier = Modifier) {
         ResolutionSelector.Builder()
           .setAllowedResolutionMode(ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE)
           .setResolutionFilter { sizes, rotation ->
-            sizes.filter { it.width > 1000 }
+            sizes.filter { it.width > 1000 }.sortedByDescending { it.width }
           }
           .build())
       .setOutputImageRotationEnabled(true)

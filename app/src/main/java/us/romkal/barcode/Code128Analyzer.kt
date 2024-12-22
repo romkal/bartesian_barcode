@@ -32,7 +32,7 @@ class Code128Analyzer(private val onBarcode: (Int) -> Unit, private val isPortra
     val buffer = plane.buffer
     val beginIndex = image.width / 4 + y * plane.rowStride
     buffer.position(beginIndex)
-    buffer.limit(beginIndex + plane.rowStride / 2)
+    buffer.limit(beginIndex + image.width / 2)
 
     val threshold = findThreshold(buffer)
     var count = 0
@@ -73,7 +73,7 @@ class Code128Analyzer(private val onBarcode: (Int) -> Unit, private val isPortra
 
     val maxBucket = buckets.withIndex().maxBy { it.value }
     val nextMaxBucket =
-      buckets.withIndex().filter { (it.index - maxBucket.index).absoluteValue > 2 }
+      buckets.withIndex().filter { (it.index - maxBucket.index).absoluteValue > 4 }
         .maxBy { it.value }
     val valley = buckets.withIndex().filter {
       it.index in min(maxBucket.index, nextMaxBucket.index)..max(
@@ -81,14 +81,14 @@ class Code128Analyzer(private val onBarcode: (Int) -> Unit, private val isPortra
         nextMaxBucket.index
       )
     }.minBy { it.value }
-    return valley.index shl (8 - BUCKET_BITS)
+    return (valley.index shl (8 - BUCKET_BITS)) + (1 shl (7 - BUCKET_BITS))
   }
 
   private fun isValid(segments: List<Int>) =
     segments.lastOrNull() == 2 && segments.sum() == 68 && segments.all { it <= 4 }
 
   private fun normalizeSegments(segments: List<Int>): List<Int>? {
-    val secondBiggest = segments.sorted().reversed().getOrNull(1) ?: return null
+    val secondBiggest = segments.sortedDescending().getOrNull(1) ?: return null
     val onlyShort =
       segments.dropWhile { it < secondBiggest }.dropLastWhile { it < secondBiggest }.drop(1)
         .dropLast(1)
@@ -98,8 +98,8 @@ class Code128Analyzer(private val onBarcode: (Int) -> Unit, private val isPortra
 
 
   companion object {
-    const val BUCKET_BITS = 5;
-
+    private const val TAG = "Code128Analyzer"
+    const val BUCKET_BITS = 5
   }
 }
 

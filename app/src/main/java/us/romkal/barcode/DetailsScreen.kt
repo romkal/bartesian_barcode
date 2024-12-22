@@ -3,6 +3,7 @@ package us.romkal.barcode
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -102,7 +103,7 @@ fun DetailsScreen(
   Column(
     modifier = modifier
       .imePadding()
-      .padding(8.dp)
+      .padding(vertical = 8.dp, horizontal = 24.dp)
       .verticalScroll(state = rememberScrollState()),
     verticalArrangement = Arrangement.spacedBy(8.dp)
   ) {
@@ -175,6 +176,7 @@ fun AlcoholRow(alcohol: Alcohol, amount: Int, setAmount: (Int) -> Unit, enabled:
       horizontalArrangement = Arrangement.spacedBy(8.dp),
       verticalAlignment = Alignment.CenterVertically,
       ) {
+      Icon(contentDescription = null, painter = painterResource(alcoholSymbol(alcohol)))
       Slider(
         modifier = Modifier.weight(1f),
         value = amount.toFloat(),
@@ -212,6 +214,7 @@ fun WaterRow(water: Int, setWater: (Int) -> Unit) {
     horizontalArrangement = Arrangement.spacedBy(8.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
+    Icon(contentDescription = null, painter = painterResource(R.drawable.water_drop_24px))
     Slider(
       modifier = Modifier.weight(1f),
       value = water.toFloat(),
@@ -256,6 +259,15 @@ fun alcoholName(alcohol: Alcohol) = when (alcohol) {
   Alcohol.GIN -> R.string.gin
   Alcohol.RUM -> R.string.rum
   Alcohol.TEQUILA -> R.string.tequila
+}
+
+@DrawableRes
+fun alcoholSymbol(alcohol: Alcohol) = when (alcohol) {
+  Alcohol.GIN -> R.drawable.liquor_24px
+  Alcohol.RUM -> R.drawable.sailing_24px
+  Alcohol.VODKA -> R.drawable.water_full_24px
+  Alcohol.TEQUILA -> R.drawable.local_bar_24px
+  Alcohol.WHISKEY -> R.drawable.wine_bar_24px
 }
 
 @StringRes
