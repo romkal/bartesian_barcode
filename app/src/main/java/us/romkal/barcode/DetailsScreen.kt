@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -30,6 +31,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -66,16 +68,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import us.romkal.barcode.Glass.*
-import us.romkal.barcode.ui.theme.BartesianBarcodeScannerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -132,33 +131,58 @@ fun DetailsScreen(
     verticalArrangement = Arrangement.spacedBy(8.dp)
   ) {
     val drinkName = drinkMap[barcode]
-    if (drinkName != null) {
-      Text(drinkName, style = MaterialTheme.typography.headlineMedium)
-      AsyncImage(
-        model = "https://romkal.github.io/bartesian_pods/images/$drinkName.jpg",
-        contentDescription = null,
+    Row {
+      Text(
+        drinkName ?: stringResource(R.string.unknown_drink),
+        style = MaterialTheme.typography.displayMedium
       )
+      val shareIntent = remember(barcode) {
+        if (drinkName == null &&
+          viewModel.scannedImageFile != null &&
+          barcode == viewModel.scannedBarcode
+        ) viewModel.shareImageIntent() else null
+      }
+      AnimatedVisibility(shareIntent != null) {
+        IconButton(onClick = {
+          if (shareIntent != null) {
+            context.startActivity(shareIntent)
+          }
+        }) {
+          Icon(
+            imageVector = Icons.Default.Share,
+            contentDescription = stringResource(R.string.share)
+          )
+        }
+      }
     }
     ContentCard(viewModel)
     GlassRow(glass = viewModel.glass, setGlass = { viewModel.glass = it })
     DrinkIdRow({ viewModel.drinkId = it }, viewModel.drinkId)
     AnimatedContent(
-      targetState = barcode,
+      targetState = barcode to viewModel.pathForDrinkImage(drinkName),
       label = "Barcode",
       transitionSpec = {
         fadeIn().togetherWith(fadeOut())
       }
-    ) { barcodeToShow ->
+    ) { (barcodeToShow, pathForImage) ->
       Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Barcode(
-          barcode = barcodeToShow, modifier = Modifier
-            .widthIn(0.dp, 240.dp)
-            .aspectRatio(2.0f)
-            .padding(4.dp)
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+          Barcode(
+            barcode = barcodeToShow, modifier = Modifier
+              .widthIn(0.dp, 240.dp)
+              .aspectRatio(2.0f)
+              .padding(4.dp)
+          )
+          Spacer(Modifier.weight(1f))
+          AsyncImage(
+            modifier = Modifier.height(128.dp),
+            model = pathForImage,
+            contentDescription = null,
+          )
+        }
         SelectionContainer {
           Text(
-            "Code: $barcodeToShow",
+            stringResource(R.string.code, barcodeToShow),
             style = MaterialTheme.typography.bodyLarge
           )
         }
@@ -205,19 +229,15 @@ private fun CardTitle(expanded: Boolean, setExpanded: (Boolean) -> Unit) {
       state = tooltipState,
       tooltip = {
         RichTooltip(
-          title = { Text("About alcohol amount") },
+          title = { Text(stringResource(R.string.about_alcohol_amount)) },
           action = {
             Button(onClick = { tooltipState.dismiss() }) {
-              Text("OK")
+              Text(stringResource(android.R.string.ok))
             }
           }
         ) {
           Text(
-            """Alcohol strength provided here is for standard strength.
-                  |Selecting "strong" on the machine will increase the amount of alcohol by 50%.
-                  |Selecting "light" will reduce the amount by 50%.
-                  |Selecting "mocktail" will add as much water as the standard amount of alcohol.
-                """.trimMargin()
+            stringResource(R.string.alcohol_details_tooltip).trimIndent()
           )
         }
       },
@@ -233,7 +253,7 @@ private fun CardTitle(expanded: Boolean, setExpanded: (Boolean) -> Unit) {
     ) {
       Icon(
         imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-        contentDescription = if (expanded) "Fold" else "Unfold",
+        contentDescription = stringResource(if (expanded) R.string.fold else R.string.unfold),
       )
     }
   }
@@ -256,7 +276,7 @@ private fun DrinkIdRow(setDrinkId: (Int) -> Unit, drinkId: Int) {
     singleLine = true,
     supportingText = {
       if (!isValid(enteredDrinkId)) {
-        Text("Only values up to 511.")
+        Text(stringResource(R.string.only_values_up_to_511))
       }
     },
     label = { Text(stringResource(R.string.drink_id)) },
@@ -265,23 +285,42 @@ private fun DrinkIdRow(setDrinkId: (Int) -> Unit, drinkId: Int) {
 
 @Composable
 fun AlcoholRow(alcohol: Alcohol, amount: Int, setAmount: (Int) -> Unit, enabled: Boolean) {
+  AmountRow(
+    amount = if (amount == 0) 0f else amount * 0.34f - 0.20f,
+    setAmount = { setAmount(if (it == 0f) 0 else ((it + 0.2f) / 0.34f).roundToInt()) },
+    enabled = enabled,
+    title = stringResource(alcoholName(alcohol)),
+    symbol = alcoholSymbol(alcohol),
+    maxValue = 2.8f,
+  )
+}
+
+@Composable
+private fun AmountRow(
+  amount: Float,
+  setAmount: (Float) -> Unit,
+  enabled: Boolean,
+  title: String,
+  symbol: Int,
+  maxValue: Float,
+) {
   Column {
-    Text(stringResource(alcoholName(alcohol)))
+    Text(title)
     Row(
       horizontalArrangement = Arrangement.spacedBy(8.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      Icon(contentDescription = null, painter = painterResource(alcoholSymbol(alcohol)))
+      Icon(contentDescription = null, painter = painterResource(symbol))
       Slider(
         modifier = Modifier.weight(1f),
-        value = amount.toFloat(),
-        onValueChange = { setAmount(it.roundToInt()) },
-        valueRange = 0f..7f,
+        value = amount,
+        onValueChange = { setAmount(it) },
+        valueRange = 0f..maxValue,
         enabled = enabled,
       )
       Text(
-        stringResource(R.string.oz, amount * 0.3f),
-        modifier = Modifier.width(56.dp)
+        stringResource(R.string.oz, amount),
+        modifier = Modifier.width(64.dp)
       )
     }
   }
@@ -305,21 +344,14 @@ private fun GlassRow(glass: Glass, setGlass: (Glass) -> Unit) {
 
 @Composable
 fun WaterRow(water: Int, setWater: (Int) -> Unit) {
-  Row(
-    horizontalArrangement = Arrangement.spacedBy(8.dp),
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Icon(contentDescription = null, painter = painterResource(R.drawable.water_drop_24px))
-    Slider(
-      modifier = Modifier.weight(1f),
-      value = water.toFloat(),
-      onValueChange = { setWater(it.roundToInt()) },
-      valueRange = 0f..31f,
-    )
-    Text(
-      text = stringResource(R.string.water, water / 5f)
-    )
-  }
+  AmountRow(
+    amount = DetailsViewModel.amounts[water],
+    setAmount = { setWater(DetailsViewModel.waterForAmount(it)) },
+    enabled = true,
+    title = stringResource(R.string.water),
+    symbol = R.drawable.water_drop_24px,
+    maxValue = 12f,
+  )
 }
 
 @Composable
@@ -370,12 +402,4 @@ fun resForGlass(glass: Glass) = when (glass) {
   HIGHBALL -> R.string.highball
   LOWBALL -> R.string.lowball
   SHAKER -> R.string.shaker
-}
-
-@Preview
-@Composable
-fun Preview() {
-  BartesianBarcodeScannerTheme {
-    DetailsScreen(viewModel = DetailsViewModel(SavedStateHandle(), scannedBarcode = 57645)) {}
-  }
 }

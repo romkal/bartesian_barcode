@@ -1,6 +1,7 @@
 package us.romkal.barcode
 
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,37 +14,42 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.center
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.createTempFile
+import kotlin.io.path.outputStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreen(
-    modifier: Modifier = Modifier, onBarcode: (Int) -> Unit,
+    modifier: Modifier = Modifier, onBarcode: (Int, Path?) -> Unit,
     setCustomActions: (@Composable RowScope.() -> Unit) -> Unit,
   ) {
   val coroutineScope = rememberCoroutineScope()
-  var callbackCalled by remember { mutableStateOf(false) }
   val permissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
   if (!permissionState.status.isGranted) {
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -55,7 +61,7 @@ fun CameraScreen(
           Text(stringResource(R.string.grant_permission))
         }
         Button(onClick = {
-          onBarcode(0)
+          onBarcode(0, null)
         }) {
           Text(stringResource(R.string.manual_entry))
         }
@@ -71,7 +77,7 @@ fun CameraScreen(
     setCustomActions {
       IconButton(
         onClick = {
-          onBarcode(0)
+          onBarcode(0, null)
         },
       ) {
         Icon(
@@ -83,14 +89,20 @@ fun CameraScreen(
   }
   Box(modifier = modifier) {
     val isPortrait = LocalConfiguration.current.layoutDirection == Configuration.ORIENTATION_PORTRAIT
+    val context = LocalContext.current
+    var callbackCalled by remember { mutableStateOf(false) }
     Camera(remember(isPortrait) {
       Code128Analyzer(
-        onBarcode = {
-          coroutineScope.launch(Dispatchers.Main) {
-            if (!callbackCalled) {
-              onBarcode(it)
+        onBarcode = {bitmap, code ->
+          if (callbackCalled) return@Code128Analyzer
+          callbackCalled = true
+          coroutineScope.launch {
+            val file = withContext(Dispatchers.IO) {
+              val file = createTempFile(directory = File(context.filesDir, "barcodes").toPath(), "barcode", ".jpg")
+              bitmap.compress(Bitmap.CompressFormat.JPEG, 80, file.outputStream())
+              file
             }
-            callbackCalled = true
+            onBarcode(code, file)
           }
         },
         isPortrait = isPortrait,

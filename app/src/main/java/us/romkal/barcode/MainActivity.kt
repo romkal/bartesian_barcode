@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,9 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlin.io.path.pathString
 import us.romkal.barcode.ui.theme.BartesianBarcodeScannerTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,9 +45,13 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val barcodeToShow = intent.data?.schemeSpecificPart?.toIntOrNull()
-    val startDestination = if (barcodeToShow != null) Details(barcodeToShow) else Camera
+    val startDestination = if (barcodeToShow != null) Details(barcodeToShow, file = null) else Camera
     enableEdgeToEdge()
     setContent {
+      val drinksViewModel = viewModel<DrinksViewModel>()
+      LaunchedEffect(Unit) {
+        drinksViewModel.loadDrinksFromNetwork()
+      }
       val navController = rememberNavController()
       val (customActions, setCustomActions) = remember {
         mutableStateOf<@Composable RowScope.() -> Unit>({})
@@ -81,7 +88,7 @@ class MainActivity : ComponentActivity() {
           ) {
             composable<Camera> {
               CameraScreen(
-                onBarcode = { barcode -> navController.navigate(Details(barcode)) },
+                onBarcode = { barcode, file -> navController.navigate(Details(barcode, file?.pathString)) },
                 setCustomActions = setCustomActions,
               )
             }

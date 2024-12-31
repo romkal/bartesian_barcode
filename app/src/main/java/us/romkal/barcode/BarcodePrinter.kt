@@ -20,7 +20,8 @@ class BarcodePrinter(private val context: Context) {
   ) {
     return withContext(Dispatchers.IO) {
       val document = PrintedPdfDocument(
-        context, PrintAttributes.Builder()
+        context,
+        PrintAttributes.Builder()
           .setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME)
           .setMediaSize(PrintAttributes.MediaSize.NA_LETTER)
           .setDuplexMode(PrintAttributes.DUPLEX_MODE_NONE)
@@ -47,7 +48,7 @@ class BarcodePrinter(private val context: Context) {
             amount * 0.3f
           )
         }.toTypedArray(),
-        context.getString(R.string.water, water / 5f),
+        context.getString(R.string.water_amount, water / 5f),
         context.getString(R.string.glass, glass),
       )
       document.finishPage(page)

@@ -21,7 +21,7 @@ class DrinksViewModel(application: Application) : AndroidViewModel(application) 
         })
   )
 
-  init {
+  fun loadDrinksFromNetwork() {
     viewModelScope.launch {
       val request = Request.Builder()
         .url("https://romkal.github.io/bartesian_pods/pods_data.csv")
@@ -43,7 +43,7 @@ class DrinksViewModel(application: Application) : AndroidViewModel(application) 
 
   private fun parseCsv(text: String): Map<Int, String> {
     return text.lines().associate {
-      val (name, code) = it.split(',', limit = 2)
+      val (code, name) = it.split(',', limit = 2)
       code.toInt() to name
     }
   }

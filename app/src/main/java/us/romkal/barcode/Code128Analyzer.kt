@@ -1,5 +1,6 @@
 package us.romkal.barcode
 
+import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import java.nio.ByteBuffer
@@ -9,14 +10,14 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalUnsignedTypes::class)
-class Code128Analyzer(private val onBarcode: (Int) -> Unit, private val isPortrait: Boolean) :
+class Code128Analyzer(private val onBarcode: (Bitmap, Int) -> Unit, private val isPortrait: Boolean) :
   ImageAnalysis.Analyzer {
   override fun analyze(image: ImageProxy) {
-    findBarcode(image)?.let(onBarcode)
+    findBarcode(image)?.let {onBarcode(it.first, it.second)}
     image.close()
   }
 
-  private fun findBarcode(image: ImageProxy): Int? {
+  private fun findBarcode(image: ImageProxy): Pair<Bitmap, Int>? {
     val start = if (isPortrait) 4 else 3
     for (y in image.height * start / 10..image.height * (10 - start) / 10) {
       analyzeLine(y, image)?.let { return it }
@@ -27,7 +28,7 @@ class Code128Analyzer(private val onBarcode: (Int) -> Unit, private val isPortra
   private fun analyzeLine(
     y: Int,
     image: ImageProxy,
-  ): Int? {
+  ): Pair<Bitmap, Int>? {
     val plane = image.planes[0]
     val buffer = plane.buffer
     val beginIndex = image.width / 4 + y * plane.rowStride
@@ -55,7 +56,9 @@ class Code128Analyzer(private val onBarcode: (Int) -> Unit, private val isPortra
     buffer.limit(buffer.capacity())
     val normalized = normalizeSegments(segments)
     return if (normalized != null && isValid(normalized)) {
-      Code128.tryParse(normalized)
+      Code128.tryParse(normalized)?.let {
+        image.toBitmap() to it
+      }
     } else {
       null
     }
