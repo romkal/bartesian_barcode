@@ -22,6 +22,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity() {
       val (customActions, setCustomActions) = remember {
         mutableStateOf<@Composable RowScope.() -> Unit>({})
       }
+      val snackbarHostState = remember { SnackbarHostState() }
       BartesianBarcodeScannerTheme {
         Scaffold(
           modifier = Modifier
@@ -80,6 +83,7 @@ class MainActivity : ComponentActivity() {
               },
             )
           },
+          snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { innerPadding ->
           NavHost(
             modifier = Modifier.padding(innerPadding),
@@ -92,7 +96,7 @@ class MainActivity : ComponentActivity() {
                 setCustomActions = setCustomActions,
               )
             }
-            composable<Details> { DetailsScreen(setCustomActions = setCustomActions) }
+            composable<Details> { DetailsScreen(setCustomActions = setCustomActions, snackbarHostState = snackbarHostState) }
           }
         }
       }

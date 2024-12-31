@@ -101,7 +101,6 @@ class Code128Analyzer(private val onBarcode: (Bitmap, Int) -> Unit, private val 
 
 
   companion object {
-    private const val TAG = "Code128Analyzer"
     const val BUCKET_BITS = 5
   }
 }

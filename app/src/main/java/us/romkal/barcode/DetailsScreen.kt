@@ -44,6 +44,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TooltipBox
@@ -72,7 +73,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import us.romkal.barcode.Glass.*
 
@@ -80,9 +80,10 @@ import us.romkal.barcode.Glass.*
 @Composable
 fun DetailsScreen(
   modifier: Modifier = Modifier,
+  snackbarHostState: SnackbarHostState,
   viewModel: DetailsViewModel = viewModel<DetailsViewModel>(),
   setCustomActions: (@Composable RowScope.() -> Unit) -> Unit,
-) {
+  ) {
   val barcode = viewModel.barcode
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
@@ -93,19 +94,22 @@ fun DetailsScreen(
     rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
       if (uri != null) {
         scope.launch {
-          context.contentResolver.openOutputStream(uri)?.let {
+          context.contentResolver.openOutputStream(uri, "wt")?.use {
             BarcodePrinter(context).printPdf(
               barcode,
               it,
-              viewModel.alcoholStates.mapValues { it.value.intValue }.filterValues { it > 0 }
+              Alcohol.entries.associateWith {
+                viewModel.alcoholAmount(it).value
+              }.filterValues { it > 0f }
                 .mapKeys { context.getString(alcoholName(it.key)) },
-              viewModel.water,
+              viewModel.waterAmount.value,
               context.getString(resForGlass(viewModel.glass)),
             )
           }
           val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/pdf")
             .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
           context.startActivity(intent)
+          snackbarHostState.showSnackbar("Saved")
         }
       }
     }
@@ -203,17 +207,17 @@ private fun ContentCard(viewModel: DetailsViewModel) {
     ) {
       CardTitle(expanded, setExpanded)
       for (alcohol in Alcohol.entries) {
-        val (amount, setAmount) = viewModel.alcoholStates[alcohol]!!
-        AnimatedVisibility(expanded || amount != 0) {
+        val amount = viewModel.alcoholAmount(alcohol).value
+        AnimatedVisibility(expanded || amount != 0f) {
           AlcoholRow(
             alcohol,
             amount = amount,
-            setAmount = setAmount,
-            enabled = amount > 0 || viewModel.alcoholCount < 3
+            setAmount = { viewModel.setAlcoholAmount(alcohol, it) },
+            enabled = amount > 0f || viewModel.alcoholCount < 3
           )
         }
       }
-      WaterRow(water = viewModel.water, setWater = { viewModel.water = it })
+      WaterRow(water = viewModel.waterAmount.value, setWater = { viewModel.setWater(it) })
     }
   }
 }
@@ -284,14 +288,14 @@ private fun DrinkIdRow(setDrinkId: (Int) -> Unit, drinkId: Int) {
 }
 
 @Composable
-fun AlcoholRow(alcohol: Alcohol, amount: Int, setAmount: (Int) -> Unit, enabled: Boolean) {
+fun AlcoholRow(alcohol: Alcohol, amount: Float, setAmount: (Float) -> Unit, enabled: Boolean) {
   AmountRow(
-    amount = if (amount == 0) 0f else amount * 0.34f - 0.20f,
-    setAmount = { setAmount(if (it == 0f) 0 else ((it + 0.2f) / 0.34f).roundToInt()) },
+    amount = amount,
+    setAmount = setAmount,
     enabled = enabled,
     title = stringResource(alcoholName(alcohol)),
     symbol = alcoholSymbol(alcohol),
-    maxValue = 2.8f,
+    maxValue = 2.5f,
   )
 }
 
@@ -343,10 +347,10 @@ private fun GlassRow(glass: Glass, setGlass: (Glass) -> Unit) {
 }
 
 @Composable
-fun WaterRow(water: Int, setWater: (Int) -> Unit) {
+fun WaterRow(water: Float, setWater: (Float) -> Unit) {
   AmountRow(
-    amount = DetailsViewModel.amounts[water],
-    setAmount = { setWater(DetailsViewModel.waterForAmount(it)) },
+    amount = water,
+    setAmount = setWater,
     enabled = true,
     title = stringResource(R.string.water),
     symbol = R.drawable.water_drop_24px,

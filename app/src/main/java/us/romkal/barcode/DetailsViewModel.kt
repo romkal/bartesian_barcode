@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +15,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import java.io.File
+import kotlin.math.roundToInt
 
 class DetailsViewModel(
   app: Application,
@@ -64,7 +67,7 @@ class DetailsViewModel(
     return sendIntent
   }
 
-  val alcoholStates = Alcohol.entries.associateWith { alcohol ->
+  private val alcoholStates = Alcohol.entries.associateWith { alcohol ->
     val amountIdx = listOfAlcohols(scannedBarcode).indexOf(alcohol)
     val amount = if (amountIdx == -1) {
       0
@@ -74,7 +77,24 @@ class DetailsViewModel(
     mutableIntStateOf(amount)
   }.toSortedMap()
 
-  var water by mutableIntStateOf(scannedBarcode ushr 3 and 0b11111)
+  fun alcoholAmount(alcohol: Alcohol): State<Float> = derivedStateOf {
+      val amount = alcoholStates[alcohol]!!.intValue
+      if (amount == 0) 0f else amount * 0.34f - 0.20f
+    }
+
+  fun setAlcoholAmount(alcohol: Alcohol, amount: Float) {
+    alcoholStates[alcohol]!!.intValue = if (amount == 0f) 0 else ((amount + 0.2f) / 0.34f).roundToInt().coerceIn(0, 8)
+  }
+
+  private var water by mutableIntStateOf(scannedBarcode ushr 3 and 0b11111)
+
+  val waterAmount = derivedStateOf {
+    amounts[water]
+  }
+
+  fun setWater(amount: Float) {
+    water = waterForAmount(amount)
+  }
 
   var glass by mutableStateOf(
     when (scannedBarcode and 0b110) {

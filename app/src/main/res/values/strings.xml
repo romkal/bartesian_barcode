@@ -12,14 +12,14 @@
   <string name="highball">Highball</string>
   <string name="shaker">Shaker</string>
   <string name="water">Water</string>
-  <string name="water_amount">%.1f oz water</string>
+  <string name="water_amount">%.1f oz of water</string>
   <string name="privacy_url">https://www.venakalukiewicz.com/bartesian-privacy-policy</string>
   <string name="privacy_policy">Privacy policy</string>
   <string name="more">More</string>
   <string name="drink_id">Drink ID</string>
   <string name="oz">%.1f oz.</string>
   <string name="code">Code: %1$d</string>
-  <string name="strength_of">Strength of %1$s: %2$.1f oz.</string>
+  <string name="strength_of">Amount of %1$s: %2$.1f oz.</string>
   <string name="glass">Glass: %1$s</string>
   <string name="manual_entry">Manual entry</string>
   <string name="grant_permission">Grant permission</string>
@@ -34,4 +34,8 @@
   <string name="fold">Fold</string>
   <string name="unfold">Unfold</string>
   <string name="only_values_up_to_511">Only values up to 511.</string>
+  <string name="standard_strength">Standard strength:</string>
+  <string name="light_strength">Light strength:</string>
+  <string name="strong_strength">Strong strength:</string>
+  <string name="mocktail_strength">Mocktail:</string>
 </resources>

@@ -6,7 +6,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.print.PrintAttributes
 import android.print.pdf.PrintedPdfDocument
+import androidx.annotation.StringRes
 import java.io.OutputStream
+import kotlin.collections.component1
+import kotlin.collections.component2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -14,8 +17,8 @@ class BarcodePrinter(private val context: Context) {
   suspend fun printPdf(
     barcode: Int,
     os: OutputStream,
-    alcohols: Map<String, Int>,
-    water: Int,
+    alcohols: Map<String, Float>,
+    water: Float,
     glass: String,
   ) {
     return withContext(Dispatchers.IO) {
@@ -30,35 +33,53 @@ class BarcodePrinter(private val context: Context) {
       )
       val page = document.startPage(0)
       val canvas = page.canvas
-      canvas.translate(0f, 72f)
       val paint = Paint()
       paint.color = Color.BLACK
+      canvas.translate(0f, 72f)
+      canvas.save()
 
-      drawBarcode(barcode, canvas, paint)
-      canvas.translate(80f, 0f)
+      repeat(5) {
+        drawBarcode(barcode, canvas, paint)
+        canvas.translate(0f, 72f)
+      }
+      canvas.restore()
+      canvas.translate(100f, 0f)
 
       drawTextBlock(
         canvas,
         paint,
         context.getString(R.string.code, barcode),
-        *alcohols.map { (alcohol, amount) ->
-          context.getString(
-            R.string.strength_of,
-            alcohol,
-            amount * 0.3f
-          )
-        }.toTypedArray(),
-        context.getString(R.string.water_amount, water / 5f),
         context.getString(R.string.glass, glass),
+        *strengthDescription(R.string.standard_strength, alcohols, water),
+        *strengthDescription(R.string.strong_strength, alcohols.mapValues { it.value * 0.5f }, water),
+        *strengthDescription(R.string.light_strength, alcohols.mapValues { it.value * 1.5f }, water),
+        *strengthDescription(R.string.mocktail_strength, emptyMap(), water + alcohols.values.sum()),
       )
       document.finishPage(page)
-      os.use {
-        document.writeTo(it)
-      }
+      document.writeTo(os)
       document.close()
     }
 
   }
+
+  fun strengthDescription(
+    @StringRes strengthLabelResId: Int,
+    alcohols: Map<String, Float>,
+    water: Float,
+  ): Array<String> =
+    arrayOf(
+      context.getString(strengthLabelResId),
+      *alcohols.map { (alcohol, amount) ->
+        context.getString(
+          R.string.strength_of,
+          alcohol,
+          amount
+        )
+      }.toTypedArray(),
+      context.getString(R.string.water_amount, water),
+      ""
+    )
+
 
   private fun drawTextBlock(
     canvas: Canvas,
