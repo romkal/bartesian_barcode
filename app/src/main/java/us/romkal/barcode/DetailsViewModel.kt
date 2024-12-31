@@ -9,10 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 
-class DetailsViewModel(
-  savedStateHandle: SavedStateHandle): ViewModel() {
-  val scannedBarcode = savedStateHandle.toRoute<Details>().barcode
-
+class DetailsViewModel @JvmOverloads constructor(
+  savedStateHandle: SavedStateHandle,
+  val scannedBarcode: Int = savedStateHandle.toRoute<Details>().barcode): ViewModel() {
     private fun listOfAlcohols(barcode: Int): List<Alcohol> = listOfNotNull(
     barcode.ifHasBit(11, Alcohol.TEQUILA),
     barcode.ifHasBit(10, Alcohol.VODKA),
@@ -68,7 +67,5 @@ class DetailsViewModel(
 }
 
 private fun <T> Int.ifHasBit(bit: Int, value: T): T? = if (ifHasBit(bit)) value else null
-
-
 
 private fun Int.ifHasBit(bit: Int): Boolean = this and (1 shl bit) > 0

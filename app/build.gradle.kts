@@ -13,8 +13,8 @@ android {
     applicationId = "us.romkal.barcode"
     minSdk = 24
     targetSdk = 35
-    versionCode = 2
-    versionName = "0.02"
+    versionCode = 3
+    versionName = "0.03"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -54,6 +54,12 @@ dependencies {
   implementation(libs.kotlinx.serialization.json)
   implementation(libs.accompanist.permissions)
   implementation(libs.androidx.constraintlayout.compose)
+  implementation(libs.coil.network.okhttp)
+  implementation(libs.coil.compose)
+  implementation(libs.okhttp)
+  implementation(libs.coil.network.cache.control)
+  implementation(libs.androidx.lifecycle.runtime.android)
+  implementation(libs.okhttp.coroutines)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)

@@ -1,24 +1,27 @@
 [versions]
 agp = "8.7.3"
 kotlin = "2.0.0"
-coreKtx = "1.10.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.8.0"
-composeBom = "2024.04.01"
-cameraCompose = "1.5.0-alpha03"
-hiltNavigationCompose = "1.2.0"
-cameraLifecycle = "1.5.0-alpha03"
+activityCompose = "1.9.3"
+composeBom = "2024.12.01"
+cameraCompose = "1.5.0-alpha04"
+cameraLifecycle = "1.5.0-alpha04"
 cameraViewfinder = "1.4.0-alpha07"
-cameraView = "1.5.0-alpha03"
-cameraCamera2 = "1.5.0-alpha03"
-navigationCompose = "2.9.0-alpha02"
+cameraView = "1.5.0-alpha04"
+cameraCamera2 = "1.5.0-alpha04"
+navigationCompose = "2.9.0-alpha04"
 kotlinxSerializationJson = "1.7.3"
-pdfbox = "3.0.3"
 accompanistPermissions = "0.36.0"
 constraintlayoutCompose = "1.1.0"
+coilNetworkOkhttp = "3.0.4"
+coilCompose = "3.0.4"
+okhttp = "4.12.0"
+coilNetworkCacheControl = "3.0.4"
+okhttpCoroutines = "5.0.0-alpha.14"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,16 +39,20 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-camera-compose = { group = "androidx.camera", name = "camera-compose", version.ref = "cameraCompose" }
-androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
 androidx-camera-viewfinder = { group = "androidx.camera", name = "camera-viewfinder", version.ref = "cameraViewfinder" }
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraCamera2" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-pdfbox = { group = "org.apache.pdfbox", name = "pdfbox", version.ref = "pdfbox" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coilCompose" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+coil-network-cache-control = { group = "io.coil-kt.coil3", name = "coil-network-cache-control", version.ref = "coilNetworkCacheControl" }
+androidx-lifecycle-runtime-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-android", version.ref = "lifecycleRuntimeKtx" }
+okhttp-coroutines = { group = "com.squareup.okhttp3", name = "okhttp-coroutines", version.ref = "okhttpCoroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

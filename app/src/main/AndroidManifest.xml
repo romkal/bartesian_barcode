@@ -6,7 +6,9 @@
       android:name="android.hardware.camera"
       android:required="true" />
   <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
   <application
+      android:name=".BarcodeScannerApplication"
       android:allowBackup="true"
       android:dataExtractionRules="@xml/data_extraction_rules"
       android:fullBackupContent="@xml/backup_rules"
@@ -33,7 +35,8 @@
     <provider
         android:authorities="${applicationId}.files"
         android:name="androidx.core.content.FileProvider"
-      android:grantUriPermissions="true">
+        android:grantUriPermissions="true"
+        tools:ignore="ExportedContentProvider">
       <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
         android:resource="@xml/provider_paths"/>
     </provider>

@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                 setCustomActions = setCustomActions,
               )
             }
-            composable<Details> { DetailsScreen(setCustomActions) }
+            composable<Details> { DetailsScreen(setCustomActions = setCustomActions) }
           }
         }
       }
