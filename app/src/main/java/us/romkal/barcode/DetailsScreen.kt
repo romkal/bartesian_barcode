@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -72,7 +73,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.launch
 import us.romkal.barcode.Glass.*
 
@@ -162,29 +164,37 @@ fun DetailsScreen(
     ContentCard(viewModel)
     GlassRow(glass = viewModel.glass, setGlass = { viewModel.glass = it })
     DrinkIdRow({ viewModel.drinkId = it }, viewModel.drinkId)
-    AnimatedContent(
-      targetState = barcode to viewModel.pathForDrinkImage(drinkName),
-      label = "Barcode",
-      transitionSpec = {
-        fadeIn().togetherWith(fadeOut())
-      }
-    ) { (barcodeToShow, pathForImage) ->
-      Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        AnimatedContent(
+          targetState = barcode,
+          label = "Barcode",
+          transitionSpec = {
+            fadeIn().togetherWith(fadeOut())
+          }
+        ) { barcodeToShow ->
           Barcode(
             barcode = barcodeToShow, modifier = Modifier
               .widthIn(0.dp, 240.dp)
               .aspectRatio(2.0f)
               .padding(4.dp)
           )
-          Spacer(Modifier.weight(1f))
-          AsyncImage(
-            modifier = Modifier.height(128.dp),
-            model = pathForImage,
-            contentDescription = null,
-          )
         }
-        SelectionContainer {
+        Spacer(Modifier.weight(1f))
+        DrinkImage(
+          drinkName = drinkName,
+          localImage = if (viewModel.scannedBarcode == barcode) viewModel.scannedImageFile else null,
+          modifier = Modifier.height(128.dp),
+        )
+      }
+      SelectionContainer {
+        AnimatedContent(
+          targetState = barcode,
+          label = "Code",
+          transitionSpec = {
+            fadeIn().togetherWith(fadeOut())
+          }
+        ) { barcodeToShow ->
           Text(
             stringResource(R.string.code, barcodeToShow),
             style = MaterialTheme.typography.bodyLarge
@@ -381,6 +391,24 @@ fun Barcode(barcode: Int, modifier: Modifier = Modifier) {
       drawRect(Color.Black, style = Stroke(width = 3 * unit))
     }
   }
+}
+
+@Composable
+fun DrinkImage(drinkName: String?, localImage: String?, modifier: Modifier = Modifier) {
+  val menuPainter = drinkName?.let { rememberAsyncImagePainter("https://www.bartesianmenu.com/cocktail_images/${drinkName.lowercase().filter { !it.isWhitespace() }}.jpg")}
+  val menuState = menuPainter?.state?.collectAsState()
+  val painter = if (menuState != null && menuState.value !is AsyncImagePainter.State.Error) {
+    menuPainter
+  } else if (localImage != null) {
+    rememberAsyncImagePainter(localImage)
+  } else {
+    rememberAsyncImagePainter("https://romkal.github.io/bartesian_pods/images/$drinkName.jpg")
+  }
+  Image(
+    modifier = modifier,
+    painter = painter,
+    contentDescription = null,
+    )
 }
 
 @StringRes

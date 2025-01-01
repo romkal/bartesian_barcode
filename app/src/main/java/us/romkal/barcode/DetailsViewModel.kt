@@ -37,11 +37,6 @@ class DetailsViewModel(
     barcode.ifHasBit(12, Alcohol.WHISKEY),
   )
 
-  fun pathForDrinkImage(drinkName: String?): String? {
-    return scannedImageFile?.takeIf { scannedBarcode == barcode }
-      ?: "https://romkal.github.io/bartesian_pods/images/$drinkName.jpg"
-  }
-
   fun shareImageIntent(): Intent? {
     val sharedImageFile = File(scannedImageFile ?: return null)
     val application = getApplication<Application>()
