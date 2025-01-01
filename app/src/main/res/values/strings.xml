@@ -28,8 +28,8 @@
   <string name="about_alcohol_amount">About alcohol amount</string>
   <string name="alcohol_details_tooltip">"
     Alcohol strength provided here is for standard strength.
-    Selecting \"strong\" on the machine will increase the amount of alcohol by 50%.
-    Selecting \"light\" will reduce the amount by 50%.
+    Selecting \"strong\" on the machine will increase the amount of alcohol by 70%.
+    Selecting \"light\" will reduce the amount by 30%.
     Selecting \"mocktail\" will add as much water as the standard amount of alcohol."</string>
   <string name="fold">Fold</string>
   <string name="unfold">Unfold</string>

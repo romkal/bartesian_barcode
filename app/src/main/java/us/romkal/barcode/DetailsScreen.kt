@@ -295,7 +295,7 @@ fun AlcoholRow(alcohol: Alcohol, amount: Float, setAmount: (Float) -> Unit, enab
     enabled = enabled,
     title = stringResource(alcoholName(alcohol)),
     symbol = alcoholSymbol(alcohol),
-    maxValue = 2.5f,
+    maxValue = DetailsViewModel.ALCOHOL_AMOUNTS.last(),
   )
 }
 
@@ -354,7 +354,7 @@ fun WaterRow(water: Float, setWater: (Float) -> Unit) {
     enabled = true,
     title = stringResource(R.string.water),
     symbol = R.drawable.water_drop_24px,
-    maxValue = 12f,
+    maxValue = DetailsViewModel.WATER_AMOUNTS.last(),
   )
 }
 

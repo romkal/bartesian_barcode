@@ -15,7 +15,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import java.io.File
-import kotlin.math.roundToInt
 
 class DetailsViewModel(
   app: Application,
@@ -79,17 +78,19 @@ class DetailsViewModel(
 
   fun alcoholAmount(alcohol: Alcohol): State<Float> = derivedStateOf {
       val amount = alcoholStates[alcohol]!!.intValue
-      if (amount == 0) 0f else amount * 0.34f - 0.20f
+      if (amount == 0) 0f else ALCOHOL_AMOUNTS[amount - 1]
     }
 
   fun setAlcoholAmount(alcohol: Alcohol, amount: Float) {
-    alcoholStates[alcohol]!!.intValue = if (amount == 0f) 0 else ((amount + 0.2f) / 0.34f).roundToInt().coerceIn(0, 8)
+    val binarySearched = if (amount == 0f) 0 else ALCOHOL_AMOUNTS.binarySearch(amount) + 1
+    val actual = if (binarySearched >= 0) binarySearched else -binarySearched - 1
+    alcoholStates[alcohol]!!.intValue = actual
   }
 
   private var water by mutableIntStateOf(scannedBarcode ushr 3 and 0b11111)
 
   val waterAmount = derivedStateOf {
-    amounts[water]
+    WATER_AMOUNTS[water]
   }
 
   fun setWater(amount: Float) {
@@ -132,20 +133,55 @@ class DetailsViewModel(
 
   companion object {
     fun waterForAmount(amount: Float): Int {
-      val sortedAmounts = amounts.withIndex().sortedBy { it.value }
+      val sortedAmounts = WATER_AMOUNTS.withIndex().sortedBy { it.value }
       return sortedAmounts.findLast { it.value <= amount }?.index ?: 0
     }
 
-    val amounts = Array<Float>(1 shl 5) {
-      when (it) {
-        in 0..2 -> 0.25f * it
-        in 3..10 -> 0.23f * it - 0.5f
-        in 11..27 -> 0.44f * it - 2.65f
-        in 28..30 -> 0.425f * it - 1.7f
-        31 -> 12f
-        else -> error("Not valid index")
-      }
-    }
+    val WATER_AMOUNTS = arrayOf(
+      0.2f,
+      0.45f,
+      0.7f,
+      0.35f,
+      0.65f,
+      0.8f,
+      1.1f,
+      1.3f,
+      1.55f,
+      1.7f,
+      2f,
+      2.4f,
+      2.85f,
+      3.25f,
+      3.7f,
+      4.2f,
+      4.65f,
+      5.15f,
+      5.5f,
+      5.95f,
+      6.35f,
+      6.8f,
+      7.25f,
+      7.65f,
+      8.1f,
+      8.6f,
+      9.1f,
+      9.45f,
+      10.4f,
+      10.85f,
+      11.25f,
+      12.15f,
+    )
+
+    val ALCOHOL_AMOUNTS = arrayOf(
+      0.55f,
+      0.8f,
+      1.05f,
+      1.4f,
+      1.75f,
+      2.15f,
+      2.35f,
+      3f,
+    )
   }
 }
 

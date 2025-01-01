@@ -51,8 +51,8 @@ class BarcodePrinter(private val context: Context) {
         context.getString(R.string.code, barcode),
         context.getString(R.string.glass, glass),
         *strengthDescription(R.string.standard_strength, alcohols, water),
-        *strengthDescription(R.string.strong_strength, alcohols.mapValues { it.value * 0.5f }, water),
-        *strengthDescription(R.string.light_strength, alcohols.mapValues { it.value * 1.5f }, water),
+        *strengthDescription(R.string.strong_strength, alcohols.mapValues { it.value * 0.7f }, water),
+        *strengthDescription(R.string.light_strength, alcohols.mapValues { it.value * 1.7f }, water),
         *strengthDescription(R.string.mocktail_strength, emptyMap(), water + alcohols.values.sum()),
       )
       document.finishPage(page)
