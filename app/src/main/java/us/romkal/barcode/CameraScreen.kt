@@ -2,6 +2,7 @@ package us.romkal.barcode
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,12 +37,15 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import java.io.File
+import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.createTempFile
 import kotlin.io.path.outputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private const val TAG  = "CameraScreen"
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -98,9 +102,16 @@ fun CameraScreen(
           callbackCalled = true
           coroutineScope.launch {
             val file = withContext(Dispatchers.IO) {
-              val file = createTempFile(directory = File(context.filesDir, "barcodes").toPath(), "barcode", ".jpg")
-              bitmap.compress(Bitmap.CompressFormat.JPEG, 80, file.outputStream())
-              file
+              val dir = File(context.filesDir, "barcodes")
+              try {
+                dir.mkdirs()
+                val file = createTempFile(directory = dir.toPath(), "barcode", ".jpg")
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, file.outputStream())
+                file
+              } catch (e: IOException) {
+                Log.e(TAG, "Failed to create a file.", e)
+                null
+              }
             }
             onBarcode(code, file)
           }
