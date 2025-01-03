@@ -24,7 +24,7 @@
   <string name="manual_entry">Manual entry</string>
   <string name="grant_permission">Grant permission</string>
   <string name="unknown_drink">Unknown drink</string>
-  <string name="share">Share</string>
+  <string name="share">Send the unknown drink</string>
   <string name="about_alcohol_amount">About alcohol amount</string>
   <string name="alcohol_details_tooltip">"
     Alcohol strength provided here is for standard strength.
@@ -38,4 +38,5 @@
   <string name="light_strength">Light strength:</string>
   <string name="strong_strength">Strong strength:</string>
   <string name="mocktail_strength">Mocktail:</string>
+  <string name="alcohol_content">Alcohol Content ❓</string>
 </resources>

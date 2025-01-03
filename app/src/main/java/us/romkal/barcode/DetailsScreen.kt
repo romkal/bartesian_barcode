@@ -32,7 +32,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -137,30 +136,15 @@ fun DetailsScreen(
     verticalArrangement = Arrangement.spacedBy(8.dp)
   ) {
     val drinkName = drinkMap[barcode]
-    Row {
-      Text(
-        drinkName ?: stringResource(R.string.unknown_drink),
-        style = MaterialTheme.typography.displayMedium
-      )
-      val shareIntent = remember(barcode) {
+    TitleRow(
+      drinkName = drinkName,
+      intentToShare = remember(barcode) {
         if (drinkName == null &&
           viewModel.scannedImageFile != null &&
           barcode == viewModel.scannedBarcode
         ) viewModel.shareImageIntent() else null
       }
-      AnimatedVisibility(shareIntent != null) {
-        IconButton(onClick = {
-          if (shareIntent != null) {
-            context.startActivity(shareIntent)
-          }
-        }) {
-          Icon(
-            imageVector = Icons.Default.Share,
-            contentDescription = stringResource(R.string.share)
-          )
-        }
-      }
-    }
+    )
     ContentCard(viewModel)
     GlassRow(glass = viewModel.glass, setGlass = { viewModel.glass = it })
     DrinkIdRow({ viewModel.drinkId = it }, viewModel.drinkId)
@@ -200,6 +184,32 @@ fun DetailsScreen(
             style = MaterialTheme.typography.bodyLarge
           )
         }
+      }
+    }
+  }
+}
+
+@Composable
+private fun TitleRow(
+  drinkName: String?,
+  intentToShare: Intent?,
+) {
+  Row {
+    Text(
+      drinkName ?: stringResource(R.string.unknown_drink),
+      style = MaterialTheme.typography.displayMedium
+    )
+    AnimatedVisibility(intentToShare != null) {
+      val context = LocalContext.current
+      IconButton(onClick = {
+        if (intentToShare != null) {
+          context.startActivity(intentToShare)
+        }
+      }) {
+        Icon(
+          painter = painterResource(R.drawable.baseline_attach_email_24),
+          contentDescription = stringResource(R.string.share)
+        )
       }
     }
   }
@@ -257,7 +267,7 @@ private fun CardTitle(expanded: Boolean, setExpanded: (Boolean) -> Unit) {
       },
     ) {
       Text(
-        "Alcohol Content ❓",
+        stringResource(R.string.alcohol_content),
         Modifier.clickable(onClick = { coroutineScope.launch { tooltipState.show() } })
       )
     }
