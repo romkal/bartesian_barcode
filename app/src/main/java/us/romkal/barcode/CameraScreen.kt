@@ -39,7 +39,6 @@ import com.google.accompanist.permissions.shouldShowRationale
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
-import kotlin.io.path.createTempFile
 import kotlin.io.path.outputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -102,10 +101,10 @@ fun CameraScreen(
           callbackCalled = true
           coroutineScope.launch {
             val file = withContext(Dispatchers.IO) {
-              val dir = File(context.filesDir, "barcodes")
+              val dir = File(context.cacheDir, "barcodes")
               try {
                 dir.mkdirs()
-                val file = createTempFile(directory = dir.toPath(), "barcode", ".jpg")
+                val file = File(dir, "barcode_$code.jpg").toPath()
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 80, file.outputStream())
                 file
               } catch (e: IOException) {
