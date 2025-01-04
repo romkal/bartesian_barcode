@@ -208,6 +208,7 @@ private fun TitleRow(
       }) {
         Icon(
           painter = painterResource(R.drawable.baseline_attach_email_24),
+          tint = MaterialTheme.colorScheme.primary,
           contentDescription = stringResource(R.string.share)
         )
       }
