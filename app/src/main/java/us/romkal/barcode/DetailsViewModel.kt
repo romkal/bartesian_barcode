@@ -73,13 +73,11 @@ class DetailsViewModel(
 
   fun alcoholAmount(alcohol: Alcohol): State<Float> = derivedStateOf {
       val amount = alcoholStates[alcohol]!!.intValue
-      if (amount == 0) 0f else ALCOHOL_AMOUNTS[amount - 1]
+      if (amount == 0) 0f else ALCOHOL_AMOUNTS[amount]
     }
 
   fun setAlcoholAmount(alcohol: Alcohol, amount: Float) {
-    val binarySearched = if (amount == 0f) 0 else ALCOHOL_AMOUNTS.binarySearch(amount) + 1
-    val actual = if (binarySearched >= 0) binarySearched else -binarySearched - 1
-    alcoholStates[alcohol]!!.intValue = actual
+    alcoholStates[alcohol]!!.intValue = ALCOHOL_AMOUNTS.asList().findClosest(amount)
   }
 
   private var water by mutableIntStateOf(scannedBarcode ushr 3 and 0b11111)
@@ -129,7 +127,8 @@ class DetailsViewModel(
   companion object {
     fun waterForAmount(amount: Float): Int {
       val sortedAmounts = WATER_AMOUNTS.withIndex().sortedBy { it.value }
-      return sortedAmounts.findLast { it.value <= amount }?.index ?: 0
+      val idx = sortedAmounts.map { it.value }.findClosest(amount)
+      return sortedAmounts[idx].index
     }
 
     val WATER_AMOUNTS = arrayOf(
@@ -137,7 +136,7 @@ class DetailsViewModel(
       0.25f,
       0.5f,
       0.15f,
-      0.25f,
+      0.45f,
       0.6f,
       0.9f,
       1.1f,
@@ -168,6 +167,7 @@ class DetailsViewModel(
     )
 
     val ALCOHOL_AMOUNTS = arrayOf(
+      0f,
       0.55f,
       0.8f,
       1.05f,
@@ -183,3 +183,12 @@ class DetailsViewModel(
 private fun <T> Int.ifHasBit(bit: Int, value: T): T? = if (ifHasBit(bit)) value else null
 
 private fun Int.ifHasBit(bit: Int): Boolean = this and (1 shl bit) > 0
+
+private fun List<Float>.findClosest(target: Float): Int {
+  val binarySearched = binarySearch(target)
+  if (binarySearched >= 0) return binarySearched
+  val biggerIdx = -binarySearched - 1
+  val smaller = this[biggerIdx - 1]
+  val bigger = this[biggerIdx]
+  return if (target > smaller + (bigger - smaller) / 2f) biggerIdx else biggerIdx - 1
+}

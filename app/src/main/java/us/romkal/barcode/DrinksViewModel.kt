@@ -42,7 +42,7 @@ class DrinksViewModel(application: Application) : AndroidViewModel(application) 
   }
 
   private fun parseCsv(text: String): Map<Int, String> {
-    return text.lines().associate {
+    return text.lines().filter { it.isNotBlank() }.associate {
       val (code, name) = it.split(',', limit = 2)
       code.toInt() to name
     }

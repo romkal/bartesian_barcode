@@ -74,6 +74,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import java.text.Normalizer
 import kotlinx.coroutines.launch
 import us.romkal.barcode.Glass.*
 
@@ -406,7 +407,7 @@ fun Barcode(barcode: Int, modifier: Modifier = Modifier) {
 
 @Composable
 fun DrinkImage(drinkName: String?, localImage: String?, modifier: Modifier = Modifier) {
-  val menuPainter = drinkName?.let { rememberAsyncImagePainter("https://www.bartesianmenu.com/cocktail_images/${drinkName.lowercase().filter { !it.isWhitespace() }}.jpg")}
+  val menuPainter = drinkName?.let { rememberAsyncImagePainter(imageUrlForName(drinkName))}
   val menuState = menuPainter?.state?.collectAsState()
   val painter = if (menuState != null && menuState.value !is AsyncImagePainter.State.Error) {
     menuPainter
@@ -420,6 +421,14 @@ fun DrinkImage(drinkName: String?, localImage: String?, modifier: Modifier = Mod
     painter = painter,
     contentDescription = null,
     )
+}
+
+private fun imageUrlForName(drinkName: String): String {
+  val isLowCal = drinkName.startsWith("Low-Cal ", ignoreCase = true)
+  val baseName = if (isLowCal) drinkName.drop("Low-Cal ".length) else drinkName
+  val baseNameNormalized = Normalizer.normalize(baseName, Normalizer.Form.NFD).replace(REGEX_NON_WORD, "").lowercase()
+  val fileName = if (isLowCal) "lowcal-$baseNameNormalized" else baseNameNormalized
+  return "https://www.bartesianmenu.com/cocktail_images/$fileName.jpg"
 }
 
 @StringRes
@@ -446,3 +455,5 @@ fun resForGlass(glass: Glass) = when (glass) {
   LOWBALL -> R.string.lowball
   SHAKER -> R.string.shaker
 }
+
+private val REGEX_NON_WORD = Regex("\\p{InCombiningDiacriticalMarks}|\\W+")
