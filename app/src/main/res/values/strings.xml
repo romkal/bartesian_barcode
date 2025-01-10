@@ -30,7 +30,7 @@
     Alcohol strength provided here is for standard strength.
     Selecting \"strong\" on the machine will increase the amount of alcohol by 70%.
     Selecting \"light\" will reduce the amount by 30%.
-    Selecting \"mocktail\" will add as much water as the standard amount of alcohol."</string>
+    Selecting \"mocktail\" will add as much water as the light amount of alcohol."</string>
   <string name="fold">Fold</string>
   <string name="unfold">Unfold</string>
   <string name="only_values_up_to_511">Only values up to 511.</string>
