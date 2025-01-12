@@ -66,6 +66,7 @@ class BarcodePrinter(private val context: Context) {
           emptyMap(),
           water + 0.7f * alcohols.values.sum()
         ),
+        *context.getString(R.string.printer).trimIndent().lines().toTypedArray()
       )
       document.finishPage(page)
       document.writeTo(os)
