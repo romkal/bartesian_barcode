@@ -328,6 +328,7 @@ private fun AmountRow(
   enabled: Boolean,
   title: String,
   symbol: Int,
+  minValue: Float = 0f,
   maxValue: Float,
 ) {
   Column {
@@ -341,7 +342,7 @@ private fun AmountRow(
         modifier = Modifier.weight(1f),
         value = amount,
         onValueChange = { setAmount(it) },
-        valueRange = 0f..maxValue,
+        valueRange = minValue..maxValue,
         enabled = enabled,
       )
       Text(
@@ -376,6 +377,7 @@ fun WaterRow(water: Float, setWater: (Float) -> Unit) {
     enabled = true,
     title = stringResource(R.string.water),
     symbol = R.drawable.water_drop_24px,
+    minValue = DetailsViewModel.WATER_AMOUNTS.first(),
     maxValue = DetailsViewModel.WATER_AMOUNTS.last(),
   )
 }
