@@ -409,7 +409,11 @@ fun Barcode(barcode: Int, modifier: Modifier = Modifier) {
 
 @Composable
 fun DrinkImage(drinkName: String?, localImage: String?, modifier: Modifier = Modifier) {
-  val menuPainter = drinkName?.let { rememberAsyncImagePainter(imageUrlForName(drinkName))}
+  val menuPainter = if (USE_MENU_IMAGES) {
+    drinkName?.let { rememberAsyncImagePainter(imageUrlForName(drinkName))}
+  } else {
+    null
+  }
   val menuState = menuPainter?.state?.collectAsState()
   val painter = if (menuState != null && menuState.value !is AsyncImagePainter.State.Error) {
     menuPainter
@@ -459,3 +463,4 @@ fun resForGlass(glass: Glass) = when (glass) {
 }
 
 private val REGEX_NON_WORD = Regex("\\p{InCombiningDiacriticalMarks}|\\W+")
+private const val USE_MENU_IMAGES = false
