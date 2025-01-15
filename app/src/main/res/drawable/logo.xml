@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:viewportHeight="120" android:viewportWidth="120" android:width="66dp" android:height="66dp">
  <group android:name="pod" android:pivotX="50" android:pivotY="50" android:rotation="45" android:translateX="10" android:translateY="2">
-  <path android:fillColor="@color/white" android:strokeColor="@color/black" android:strokeWidth="3"
+  <path android:strokeColor="@color/black" android:strokeWidth="3"
    android:pathData="M50,100a50,50 0 1 1 50,-50v40a10,10 0 0 1 -10,10 Z"/>
  </group>
  <group android:name="barcode" android:translateX="25" android:translateY="30">

@@ -1,0 +1,52 @@
+<resources>
+
+  <string name="app_name">Skaner Kapsułek</string>
+  <string name="gin">Gin</string>
+  <string name="whiskey">Whiskey</string>
+  <string name="tequila">Tequilla</string>
+  <string name="vodka">Wódka</string>
+  <string name="rum">Rum</string>
+  <string name="navigate_back">Wstecz</string>
+  <string name="light">Słabyi</string>
+  <string name="strong">Mocny</string>
+  <string name="lowball">Niska</string>
+  <string name="highball">Wysoka</string>
+  <string name="shaker">Shaker</string>
+  <string name="water">Woda</string>
+  <string name="water_amount">%.1f wody</string>
+  <string name="privacy_policy">Polityka Prywatności</string>
+  <string name="more">Więcej</string>
+  <string name="drink_id">ID drinka</string>
+  <string name="oz">%.1f oz.</string>
+  <string name="code">Kod: %1$d</string>
+  <string name="strength_of">Ilość %1$s: %2$.1f oz.</string>
+  <string name="glass">Szklanka: %1$s</string>
+  <string name="manual_entry">Wprowadzanie ręczne</string>
+  <string name="grant_permission">Udziel uprawnień</string>
+  <string name="unknown_drink">Nieznany drink</string>
+  <string name="share">Wyślij nieznany drink</string>
+  <string name="about_alcohol_amount">O ilości alkoholu</string>
+  <string name="alcohol_details_tooltip">"
+    Aplikacja pokazuje standardową ilość alkoholu na podstawie mojej maszyny Bartesian.
+    Istnieje spora różnica pomiędzy wartościami podawanymi przez Bartesian a pomiarami wykonanymi przeze mnie więc nie ufaj im do końca.
+    Wygląda na to, że maszyna dodaje co najmniej 0.2oz wody do każdego drinka.
+    Wybranie \"strong\" spowoduje zwiększenie ilości alkoholu o 70%.
+    Wybranie \"light\" zredukuje ilość alkoholu o 30%.
+    Wybranie \"mocktail\" spowoduje dolanie takiej ilości wody jak alkoholu w trybie \"light\"."</string>
+  <string name="fold">Zwiń</string>
+  <string name="unfold">Rozwiń</string>
+  <string name="only_values_up_to_511">Wartości wyłącznie do 511.</string>
+  <string name="standard_strength">Standardowa moc:</string>
+  <string name="light_strength">Lekka moc:</string>
+  <string name="strong_strength">Silna moc:</string>
+  <string name="mocktail_strength">Moktail:</string>
+  <string name="alcohol_content">Zawartość alkoholu ❓</string>
+  <string name="printer">"
+    Drukuj używając drukarki laserowej.
+    Większość atramentowych ma zbyt małą rozdzielczość aby poprawnie wydrukować."</string>
+  <string name="about">O aplikacji</string>
+  <string name="about_text">"
+    Ta aplikacja jest hobbystycznym projektem.
+    &lt;br>Nie jest w żaden sposób związana z Bartesian, producentem kapsułek.
+    &lt;br>Projekt jest licencjonowany na licencji GPL 3.0 a jego kod źródłowy jest dostępny na &lt;a href="https://github.com/romkal/bartesian_barcode">https://github.com/romkal/bartesian_barcode&lt;/a>"</string>
+</resources>

@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">Bartesian Barcode Scanner</string>
+  <string name="app_name">Cocktail Pod Barcode Scanner</string>
   <string name="gin">Gin</string>
   <string name="whiskey">Whiskey</string>
   <string name="tequila">Tequila</string>
@@ -13,7 +13,7 @@
   <string name="shaker">Shaker</string>
   <string name="water">Water</string>
   <string name="water_amount">%.1f oz of water</string>
-  <string name="privacy_url">https://www.venakalukiewicz.com/bartesian-privacy-policy</string>
+  <string name="privacy_url" translatable="false">https://www.venakalukiewicz.com/bartesian-privacy-policy</string>
   <string name="privacy_policy">Privacy policy</string>
   <string name="more">More</string>
   <string name="drink_id">Drink ID</string>
@@ -29,6 +29,7 @@
   <string name="alcohol_details_tooltip">"
     Alcohol strength provided by the app is for regular strength based on my Bartesian Cocktail Maker machine.
     There is a big discrepancy between amounts advertised by Bartesian and measured by me, so take those with a grain of salt.
+    It seems that at least 0.2oz of water is always added to each drink.
     Selecting \"strong\" on the machine will increase the amount of alcohol by 70%.
     Selecting \"light\" will reduce the amount by 30%.
     Selecting \"mocktail\" will add as much water as the light amount of alcohol."</string>
@@ -43,4 +44,9 @@
   <string name="printer">"
     Print using a laser printer.
     Most ink jet printers have too low resolution to print reliably."</string>
+  <string name="about">About</string>
+  <string name="about_text">"
+    This application is a hobby project.
+    &lt;br>It is not in any way related to Bartesian, the maker of Bartesian Pods.
+    &lt;br>The project is licensed under GPL 3.0 license and its source code is available at &lt;a href="https://github.com/romkal/bartesian_barcode">https://github.com/romkal/bartesian_barcode&lt;/a>"</string>
 </resources>
