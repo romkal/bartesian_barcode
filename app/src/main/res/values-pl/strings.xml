@@ -47,6 +47,10 @@
   <string name="about">O aplikacji</string>
   <string name="about_text">"
     Ta aplikacja jest hobbystycznym projektem.
-    &lt;br>Nie jest w żaden sposób związana z Bartesian, producentem kapsułek.
-    &lt;br>Projekt jest licencjonowany na licencji GPL 3.0 a jego kod źródłowy jest dostępny na &lt;a href="https://github.com/romkal/bartesian_barcode">https://github.com/romkal/bartesian_barcode&lt;/a>"</string>
+    &lt;p>Nie jest w żaden sposób związana z Bartesian, producentem kapsułek.
+    &lt;p>Mam nadzieję, że będzie użyteczna i byłbym wdzięczny za pozytywną ocenę na Play Store.
+    &lt;p>Projekt jest licencjonowany na licencji GPL 3.0 a jego kod źródłowy jest dostępny darmowo &lt;a href="https://github.com/romkal/bartesian_barcode">tutaj&lt;/a>.
+    &lt;p>Na zdrowie,
+    &lt;br>Roman"</string>
+  <string name="rate_me">Oceń aplikację</string>
 </resources>

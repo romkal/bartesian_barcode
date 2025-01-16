@@ -47,6 +47,10 @@
   <string name="about">About</string>
   <string name="about_text">"
     This application is a hobby project.
-    &lt;br>It is not in any way related to Bartesian, the maker of Bartesian Pods.
-    &lt;br>The project is licensed under GPL 3.0 license and its source code is available at &lt;a href="https://github.com/romkal/bartesian_barcode">https://github.com/romkal/bartesian_barcode&lt;/a>"</string>
+    &lt;p>It is not in any way related to Bartesian, the maker of Bartesian Pods.
+    &lt;p>I hope you will find it useful and I'd really appreciate a good review on Play Store.
+    &lt;p>The project is licensed under GPL 3.0 license and its source code is available for free &lt;a href="https://github.com/romkal/bartesian_barcode">here&lt;/a>.
+    &lt;p>Cheers,
+    &lt;br>Roman"</string>
+  <string name="rate_me">Rate the app</string>
 </resources>
