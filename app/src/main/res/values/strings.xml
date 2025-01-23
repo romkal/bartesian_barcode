@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">Cocktail Pod Barcode Scanner</string>
+  <string name="app_name">Barcode Scanner for Bartesian</string>
   <string name="gin">Gin</string>
   <string name="whiskey">Whiskey</string>
   <string name="tequila">Tequila</string>

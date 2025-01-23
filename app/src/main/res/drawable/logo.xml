@@ -24,11 +24,4 @@
        android:pathData="M8,0v35M18,0v35M26,0v35"/>
   </group>
  </group>
-<!-- <group android:translateX="60" android:translateY="60" android:scaleX="0.9" android:scaleY="0.9">-->
-<!--  <clip-path android:pathData="M -20 10 Q -20 20 -11 20 Q -2 20 -1 40 Q -10 45 -15 45 Q 0 44 15 45 Q 10 45 1 40 Q 1 20 11 20 Q 20 20 20 10"/>-->
-<!--  <path android:fillColor="@color/purple_200" android:pathData="M-20,15h50V40h-50Z"/>-->
-<!--  <path-->
-<!--  android:strokeColor="@color/teal_700" android:strokeWidth="2"-->
-<!--  android:pathData="M -20 10 Q -20 20 -11 20 Q -2 20 -1 40 Q -10 45 -15 45 Q 0 44 15 45 Q 10 45 1 40 Q 1 20 11 20 Q 20 20 20 10"/>-->
-<!-- </group>-->
 </vector>
