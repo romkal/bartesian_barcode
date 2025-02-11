@@ -6,7 +6,7 @@ Bartesian barcodes are based on [Code128](https://en.wikipedia.org/wiki/Code_128
 
 What is the same is:
 * Bar/space widths conform to Code128 standard having thickness between 1 - 4 units
-* Each symbol consists of 6 symbols (3 bars and 3 spaces)
+* Each symbol consists of 6 elements (3 bars and 3 spaces)
 * Each symbol has total thickness of 11
 * Symbols are decoded according to Code128 C standard and encode numbers between 0 and 99
 * The last symbol is a checksum calculated according to Code128
@@ -37,13 +37,13 @@ The code is interpreted as a binary number and represented as a series of bits, 
 | 19 - 21 | Amount of the third selected alcohol (in the order above). Value between 0 - 7. |
 | 22 - 30 | Drink ID. Value between 0 - 511. |
 
-A list of drinks that I know about and a breakdown of their code available in [a spreadsheet](https://docs.google.com/spreadsheets/d/1Q9W_FA9sHv2oQAjTC1ddjxK-sF1B4wvLVJ0a20RjEbw/edit?usp=sharing).
+A list of drinks that I know about and a breakdown of their code available in [the spreadsheet](https://docs.google.com/spreadsheets/d/1Q9W_FA9sHv2oQAjTC1ddjxK-sF1B4wvLVJ0a20RjEbw/edit?usp=sharing).
 
 As seen above, a barcode can encode a separate amount of up to 3 different kinds of alcohol, although when the barcode chooses 4 kind of alcohol, it seems that the amount of all of them is encoded at bits 13-15 and bits at 16-21 are ignored.
 
 ### About Drink ID
 
-I was not able to find any change of behavior of the machine based on the content of bits 22-30.
+I was not able to find any change in a behavior of the machine based on the content of bits 22-30.
 
 There are a couple of drinks that have those bits set to 0, but other than that they are all unique per a type of coctail and they seem to stay consistent for all pods of a given kind.
 
