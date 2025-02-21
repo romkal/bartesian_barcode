@@ -13,8 +13,8 @@ android {
     applicationId = "us.romkal.barcode"
     minSdk = 24
     targetSdk = 35
-    versionCode = 15
-    versionName = "0.15"
+    versionCode = 19
+    versionName = "0.19"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -47,7 +47,6 @@ dependencies {
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
   implementation(libs.androidx.camera.lifecycle)
-  implementation(libs.androidx.camera.viewfinder)
   implementation(libs.androidx.camera.view)
   implementation(libs.androidx.camera.camera2)
   implementation(libs.androidx.navigation.compose)
@@ -60,6 +59,10 @@ dependencies {
   implementation(libs.coil.network.cache.control)
   implementation(libs.androidx.lifecycle.runtime.android)
   implementation(libs.okhttp.coroutines)
+  implementation(libs.review)
+  implementation(libs.review.ktx)
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.kotlinx.coroutines.play.services)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)

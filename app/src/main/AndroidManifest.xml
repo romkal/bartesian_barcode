@@ -24,6 +24,7 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:supportsRtl="true"
+      android:enableOnBackInvokedCallback="true"
       android:theme="@style/Theme.BartesianBarcodeScanner"
       tools:targetApi="35">
     <activity

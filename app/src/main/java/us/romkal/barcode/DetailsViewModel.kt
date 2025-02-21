@@ -1,5 +1,9 @@
 package us.romkal.barcode
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
@@ -11,15 +15,33 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import java.io.File
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 
+// At the top level of your kotlin file:
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+private val USE_KEY = intPreferencesKey("uses_count")
 class DetailsViewModel(
   app: Application,
   savedStateHandle: SavedStateHandle,
 ) : AndroidViewModel(app) {
+
+  init {
+    viewModelScope.launch {
+      app.dataStore.edit {
+        it[USE_KEY] = (it[USE_KEY] ?: 0) + 1
+      }
+    }
+  }
 
   private val details = savedStateHandle.toRoute<Details>()
 
@@ -28,6 +50,8 @@ class DetailsViewModel(
 
   val scannedImageFile: String?
     get() = details.file
+
+  val shouldAskForReview = app.dataStore.data.mapNotNull { it[USE_KEY] }.take(1).map { it % 5 == 3 }
 
   private fun listOfAlcohols(barcode: Int): List<Alcohol> = listOfNotNull(
     barcode.ifHasBit(11, Alcohol.TEQUILA),
@@ -102,7 +126,7 @@ class DetailsViewModel(
   var drinkId by mutableIntStateOf(scannedBarcode ushr 22 and 0b111111111)
 
   val alcoholCount: Int
-    get() = alcoholStates.values.filter { it.intValue > 0 }.count()
+    get() = alcoholStates.values.count { it.intValue > 0 }
 
   @Stable
   val barcode: Int

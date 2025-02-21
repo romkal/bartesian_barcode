@@ -26,7 +26,7 @@
   <string name="unknown_drink">Unknown drink</string>
   <string name="share">Send the unknown drink</string>
   <string name="about_alcohol_amount">About alcohol amount</string>
-  <string name="alcohol_details_tooltip">"
+  <string name="alcohol_details_tooltip" formatted="false">"
     Alcohol strength provided by the app is for regular strength based on my Bartesian Cocktail Maker machine.
     There is a big discrepancy between amounts advertised by Bartesian and measured by me, so take those with a grain of salt.
     It seems that at least 0.2oz of water is always added to each drink.

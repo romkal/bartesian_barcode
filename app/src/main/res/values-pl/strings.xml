@@ -26,7 +26,7 @@
   <string name="unknown_drink">Nieznany drink</string>
   <string name="share">Wyślij nieznany drink</string>
   <string name="about_alcohol_amount">O ilości alkoholu</string>
-  <string name="alcohol_details_tooltip">"
+  <string name="alcohol_details_tooltip" formatted="false">"
     Aplikacja pokazuje standardową ilość alkoholu na podstawie mojej maszyny Bartesian.
     Istnieje spora różnica pomiędzy wartościami podawanymi przez Bartesian a pomiarami wykonanymi przeze mnie więc nie ufaj im do końca.
     Wygląda na to, że maszyna dodaje co najmniej 0.2oz wody do każdego drinka.

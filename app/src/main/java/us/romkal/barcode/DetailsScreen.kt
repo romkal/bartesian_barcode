@@ -1,6 +1,8 @@
 package us.romkal.barcode
 
 import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -74,9 +76,18 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import java.text.Normalizer
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import us.romkal.barcode.Glass.*
+
+private const val TAG = "DetailsScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,6 +139,10 @@ fun DetailsScreen(
         )
       }
     }
+  }
+  val shouldAskForReview by viewModel.shouldAskForReview.collectAsState(false)
+  if (shouldAskForReview) {
+    StartReview()
   }
   Column(
     modifier = modifier
@@ -418,7 +433,14 @@ fun DrinkImage(drinkName: String?, localImage: String?, modifier: Modifier = Mod
   val painter = if (menuState != null && menuState.value !is AsyncImagePainter.State.Error) {
     menuPainter
   } else if (localImage != null) {
-    rememberAsyncImagePainter(localImage)
+    val context = LocalContext.current
+    rememberAsyncImagePainter(remember(localImage) {
+      ImageRequest.Builder(context)
+        .data(localImage)
+        .memoryCachePolicy(CachePolicy.DISABLED)
+        .diskCachePolicy(CachePolicy.DISABLED)
+        .build()
+    })
   } else {
     rememberAsyncImagePainter("https://romkal.github.io/bartesian_pods/images/$drinkName.jpg")
   }
@@ -427,6 +449,25 @@ fun DrinkImage(drinkName: String?, localImage: String?, modifier: Modifier = Mod
     painter = painter,
     contentDescription = null,
     )
+}
+
+@Composable
+fun StartReview() {
+  val activity = LocalActivity.current
+  if (activity != null) {
+    LaunchedEffect(Unit) {
+      val manager = ReviewManagerFactory.create(activity)
+      try {
+        withContext(NonCancellable) {
+          val info = manager.requestReviewFlow().await()
+          Log.d(TAG, "Asking for review")
+          manager.launchReviewFlow(activity, info).await()
+        }
+      } catch (e: Exception) {
+        Log.w(TAG, "Exception while requesting review.", e)
+      }
+    }
+  }
 }
 
 private fun imageUrlForName(drinkName: String): String {
